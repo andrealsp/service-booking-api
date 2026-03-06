@@ -22,6 +22,8 @@ public interface AuthControllerAPI {
     @PostMapping("/login")
     ResponseEntity<AuthToken> generateToken(@Valid @RequestBody UserSigninRequest request) throws ApplicationException;
 
-
+    @Operation(summary = "Validate Method", tags = "AuthController")
+    @GetMapping("/validate")
+    ResponseEntity<Boolean> validateToken(@RequestHeader(value = "Authorization") String token) throws ApplicationException;
 
 }
