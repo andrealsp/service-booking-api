@@ -1,9 +1,9 @@
 package service_booking_api.core.application.service.auth;
 
 import service_booking_api.core.domain.auth.model.AuthToken;
-import service_booking_api.core.domain.user.model.request.UserSigninRequest;
+import service_booking_api.core.domain.auth.model.request.IdentitySigninRequest;
 import service_booking_api.core.domain.auth.port.in.AuthService;
-import service_booking_api.core.domain.user.port.in.UserPort;
+import service_booking_api.core.domain.auth.port.in.IdentityPort;
 import service_booking_api.shared.exceptions.ApplicationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,23 +14,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserPort userPort;
+    private final IdentityPort identityPort;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProviderService jwtTokenProvider;
 
     @Autowired
-    public AuthServiceImpl(UserPort userPort,
+    public AuthServiceImpl(IdentityPort identityPort,
                            PasswordEncoder passwordEncoder,
                            JwtTokenProviderService jwtTokenProvider) {
-        this.userPort = userPort;
+        this.identityPort = identityPort;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
-    public AuthToken authenticate(UserSigninRequest request) throws ApplicationException {
+    public AuthToken authenticate(IdentitySigninRequest request) throws ApplicationException {
 
-        var user = userPort.retrieveUser(request);
+        var user = identityPort.retrieveUser(request);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             log.error("Invalid password");
@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
         var newToken = token.replace("Bearer ", "");
 
         var username = jwtTokenProvider.extractUsername(newToken);
-        var user = userPort.retrieveUser(UserSigninRequest.builder().identifier(username).build());
+        var user = identityPort.retrieveUser(IdentitySigninRequest.builder().identifier(username).build());
 
         return jwtTokenProvider.validateToken(user, newToken);    }
 

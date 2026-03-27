@@ -1,6 +1,6 @@
 package service_booking_api.core.application.service.auth;
 
-import service_booking_api.core.domain.user.model.response.UserDetails;
+import service_booking_api.core.domain.auth.model.response.IdentityDetails;
 import service_booking_api.core.domain.auth.port.in.JwtTokenProvider;
 import service_booking_api.shared.exceptions.ApplicationException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -25,11 +25,11 @@ public class JwtTokenProviderService implements JwtTokenProvider {
     @Value("${api.secret}")
     private String SECRET;
 
-    public String generateToken(UserDetails request) throws ApplicationException {
+    public String generateToken(IdentityDetails request) throws ApplicationException {
         return createToken(request);
     }
 
-    private String createToken(UserDetails request) throws ApplicationException {
+    private String createToken(IdentityDetails request) throws ApplicationException {
         var expirationTimeMillis = 60 * 60 * 1000;
         var secretKey = generateSecretKey(request);
 
@@ -49,7 +49,7 @@ public class JwtTokenProviderService implements JwtTokenProvider {
                 .compact();
     }
 
-    private String generateSecretKey(UserDetails request) throws ApplicationException {
+    private String generateSecretKey(IdentityDetails request) throws ApplicationException {
         try {
             log.info("Generating secret key for JWT");
             String baseKey = request.getUsername() + request.getEmail() + SECRET;
@@ -62,11 +62,11 @@ public class JwtTokenProviderService implements JwtTokenProvider {
         }
     }
 
-    public Boolean validateToken(UserDetails userDetails, String token) throws ApplicationException {
+    public Boolean validateToken(IdentityDetails identityDetails, String token) throws ApplicationException {
         try {
-            log.debug("Validating JWT token for users: {}", userDetails.getUsername());
+            log.debug("Validating JWT token for users: {}", identityDetails.getUsername());
 
-            String secretKey = generateSecretKey(userDetails);
+            String secretKey = generateSecretKey(identityDetails);
             byte[] decodedKey = Base64.getDecoder().decode(secretKey);
 
             Jwts.parser()
@@ -74,7 +74,7 @@ public class JwtTokenProviderService implements JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token);
 
-            log.debug("Token validation successful for users: {}", userDetails.getUsername());
+            log.debug("Token validation successful for users: {}", identityDetails.getUsername());
             return true;
 
         } catch (ExpiredJwtException ex) {

@@ -1,4 +1,4 @@
-package service_booking_api.core.domain.user.model.response;
+package service_booking_api.core.domain.auth.model.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
-public class UserDetails {
+public class IdentityDetails {
 
     private UUID id;
     private String name;

@@ -1,12 +1,12 @@
-package service_booking_api.core.application.service.user;
+package service_booking_api.core.application.service.auth.identity;
 
-import service_booking_api.core.application.service.user.mapper.UserDetailsMapper;
-import service_booking_api.core.application.service.user.mapper.UserEntityMapper;
-import service_booking_api.core.domain.user.entity.UserEntity;
-import service_booking_api.core.domain.user.model.request.UserSigninRequest;
-import service_booking_api.core.domain.user.model.request.UserSignupRequest;
-import service_booking_api.core.domain.user.model.response.UserDetails;
-import service_booking_api.core.domain.user.port.in.UserPort;
+import service_booking_api.core.application.service.auth.identity.mapper.IdentityDetailsMapper;
+import service_booking_api.core.application.service.auth.identity.mapper.IdentityEntityMapper;
+import service_booking_api.core.domain.auth.entity.IdentityEntity;
+import service_booking_api.core.domain.auth.model.request.IdentitySigninRequest;
+import service_booking_api.core.domain.auth.model.request.IdentitySignupRequest;
+import service_booking_api.core.domain.auth.model.response.IdentityDetails;
+import service_booking_api.core.domain.auth.port.in.IdentityPort;
 import service_booking_api.infrastructure.persistence.user.UserRepository;
 import service_booking_api.shared.exceptions.ApplicationException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,34 +16,34 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class UserPortImpl implements UserPort {
+public class IdentityPortImpl implements IdentityPort {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserPortImpl(UserRepository userRepository) {
+    public IdentityPortImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
-    public void register(UserSignupRequest request) throws ApplicationException {
+    public void register(IdentitySignupRequest request) throws ApplicationException {
 
         validateUniqueness(request.getUsername(), request.getEmail());
 
         String passwordHash = passwordEncoder.encode(request.getPassword());
 
-        UserEntity entity =
-                UserEntityMapper.mapUserEntityRegistration(request, passwordHash);
+        IdentityEntity entity =
+                IdentityEntityMapper.mapUserEntityRegistration(request, passwordHash);
 
         userRepository.save(entity);
     }
 
     @Override
-    public UserDetails retrieveUser(UserSigninRequest request) throws ApplicationException {
+    public IdentityDetails retrieveUser(IdentitySigninRequest request) throws ApplicationException {
 
         if (isEmail(request.getIdentifier())) {
-            return UserDetailsMapper.map(
+            return IdentityDetailsMapper.map(
                     userRepository.findByEmail(request.getIdentifier())
                             .orElseThrow(() -> new ApplicationException(
                                     404, "User not found"
@@ -51,7 +51,7 @@ public class UserPortImpl implements UserPort {
             );
         }
 
-        return UserDetailsMapper.map(
+        return IdentityDetailsMapper.map(
                 userRepository.findByUsername(request.getIdentifier())
                         .orElseThrow(() -> new ApplicationException(
                                 404, "User not found"

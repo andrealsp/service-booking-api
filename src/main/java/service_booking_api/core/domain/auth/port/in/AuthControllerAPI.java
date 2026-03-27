@@ -1,8 +1,8 @@
 package service_booking_api.core.domain.auth.port.in;
 
 import service_booking_api.core.domain.auth.model.AuthToken;
-import service_booking_api.core.domain.user.model.request.UserSigninRequest;
-import service_booking_api.core.domain.user.model.request.UserSignupRequest;
+import service_booking_api.core.domain.auth.model.request.IdentitySigninRequest;
+import service_booking_api.core.domain.auth.model.request.IdentitySignupRequest;
 import service_booking_api.shared.exceptions.ApplicationException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,11 +16,11 @@ public interface AuthControllerAPI {
 
     @Operation(summary = "Registration Method", tags = "AuthController")
     @PostMapping("/register")
-    ResponseEntity<Void> registerUser(@Valid @RequestBody UserSignupRequest request) throws ApplicationException;
+    ResponseEntity<Void> registerUser(@Valid @RequestBody IdentitySignupRequest request) throws ApplicationException;
 
     @Operation(summary = "GenerateToken Method", tags = "AuthController")
     @PostMapping("/login")
-    ResponseEntity<AuthToken> generateToken(@Valid @RequestBody UserSigninRequest request) throws ApplicationException;
+    ResponseEntity<AuthToken> generateToken(@Valid @RequestBody IdentitySigninRequest request) throws ApplicationException;
 
     @Operation(summary = "Validate Method", tags = "AuthController")
     @GetMapping("/validate")
