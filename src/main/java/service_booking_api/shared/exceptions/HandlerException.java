@@ -1,6 +1,6 @@
 package service_booking_api.shared.exceptions;
 
-import service_booking_api.core.domain.model.error.ErrorTemplate;
+import service_booking_api.core.domain.error.model.ErrorTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
