@@ -11,29 +11,14 @@ import service_booking_api.shared.exceptions.ApplicationException;
 
 import java.util.Set;
 
-@RequestMapping
+
+@RequestMapping("/appointments")
 @Tag(name = "AppointmentController", description = "Collection for Appointments")
 public interface AppointmentControllerAPI {
 
     @Operation(summary = "Create Appointment", tags = "AppointmentController")
     @PostMapping("/appointments")
-    ResponseEntity<AppointmentResponse> createAppointments(@Valid @RequestBody AppointmentRequest appointment) throws ApplicationException;
+    ResponseEntity<AppointmentResponse> createAppointment(@RequestHeader(value = "Authorization") String token, @Valid @RequestBody AppointmentRequest appointment) throws ApplicationException;
 
-    @Operation(summary = "Retrieve Appointment by Id", tags = "AppointmentController")
-    @GetMapping("/appointments/{id}")
-    ResponseEntity<AppointmentResponse> retrieveAppointment(@PathVariable String id) throws ApplicationException;
-
-    @Operation(summary = "Retrieve Provider Appointments", tags = "AppointmentController")
-    @GetMapping("/provider/{id}/appointments")
-    ResponseEntity<Set<AppointmentResponse>> retrieveProviderAppointments(@PathVariable String id) throws ApplicationException;
-
-    @Operation(summary = "Delete Appointment by Id", tags = "AppointmentController")
-    @DeleteMapping("/appointments/{id}")
-    ResponseEntity<AppointmentResponse> deleteAppointment(@PathVariable String id) throws ApplicationException;
-
-
-    @Operation(summary = "Cancel Appointment by Id", tags = "AppointmentController")
-    @PatchMapping("/appointments/{id}/cancel")
-    ResponseEntity<AppointmentResponse> cancelAppointment(@PathVariable String id) throws ApplicationException;
 
 }

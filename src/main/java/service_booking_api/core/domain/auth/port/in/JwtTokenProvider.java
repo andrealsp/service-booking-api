@@ -6,5 +6,7 @@ import service_booking_api.shared.exceptions.ApplicationException;
 public interface JwtTokenProvider {
 
     String generateToken(IdentityDetails identityDetails) throws ApplicationException;
+    Boolean validateToken(String token) throws ApplicationException;
+    String extractUsername(String token) throws ApplicationException;
 
 }

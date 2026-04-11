@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-public class ApplicationException extends Throwable {
+public class ApplicationException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;

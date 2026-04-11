@@ -4,24 +4,24 @@ import org.springframework.stereotype.Component;
 import service_booking_api.core.domain.auth.entity.IdentityEntity;
 import service_booking_api.core.domain.auth.entity.Role;
 import service_booking_api.core.domain.auth.model.request.IdentitySignupRequest;
+import service_booking_api.core.domain.user.entity.UserEntity;
 import service_booking_api.shared.utils.GetLocalTime;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Component
 public final class IdentityEntityMapper {
 
-    public static IdentityEntity mapUserEntityRegistration(IdentitySignupRequest request, String passwordHash) {
-        return IdentityEntity.builder()
-                .name(request.getName())
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(preparePassword(passwordHash))
-                .role(parseRole(request.getRole()))
-                .createdAt(GetLocalTime.getLocalTime())
-                .build();
-    }
+    public static IdentityEntity fromRequest(IdentitySignupRequest request, String passwordHash) {
 
-    private static String preparePassword(String passwordHash) {
-        return "{bcrypt}" + passwordHash;
+        return IdentityEntity.builder()
+                .username(request.getUsername())
+                .email(request.getContact().getEmail())
+                .password(passwordHash)
+                .role(parseRole(request.getRole()))
+                .createdAt(OffsetDateTime.now())
+                .build();
     }
 
     private static Role parseRole(String roleStr) {
@@ -40,11 +40,4 @@ public final class IdentityEntityMapper {
         }
         return null;
     }
-
-    private static String trimToNull(String s) {
-        if (s == null) return null;
-        String t = s.trim();
-        return t.isEmpty() ? null : t;
-    }
-
 }

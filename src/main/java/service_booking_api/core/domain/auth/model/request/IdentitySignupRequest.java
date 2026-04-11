@@ -9,16 +9,20 @@ import lombok.Setter;
 public class IdentitySignupRequest {
 
     @NotBlank
+    private String fullName;
+
+    private String givenName;
+
+    @NotBlank
+    private String identificationDocument;
+
+    private Contact contact;
+
+    @NotBlank
     private String username;
 
     @NotBlank
-    private String email;
-
-    @NotBlank
     private String password;
-
-    @NotBlank
-    private String name;
 
     @NotBlank
     private String role;

@@ -9,45 +9,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class HandlerException extends RuntimeException {
-
-    private static final long serialVersionUID = 1L;
+public class HandlerException {
 
     @ExceptionHandler(ApplicationException.class)
-    public static ResponseEntity<ErrorTemplate> handleAuthenticationException(ApplicationException e) {
-        log.error("ApplicationException: {}", e.getMessage());
+    public ResponseEntity<ErrorTemplate> handleApplicationException(ApplicationException e) {
 
-        Integer code = e.getErrorCode();
+        log.error("ApplicationException: {}", e.getMessage(), e);
 
-        HttpStatus status;
-        switch (code) {
-            case 400:
-                status = HttpStatus.BAD_REQUEST;
-                break;
-            case 401:
-                status = HttpStatus.UNAUTHORIZED;
-                break;
-            case 403:
-                status = HttpStatus.FORBIDDEN;
-                break;
-            case 404:
-                status = HttpStatus.NOT_FOUND;
-                break;
-            case 409:
-                status = HttpStatus.CONFLICT;
-                break;
-            case 415:
-                status = HttpStatus.UNSUPPORTED_MEDIA_TYPE;
-                break;
-            case 422:
-                status = HttpStatus.UNPROCESSABLE_ENTITY;
-                break;
-            case 503:
-                status = HttpStatus.SERVICE_UNAVAILABLE;
-                break;
-            default:
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-                break;
+        HttpStatus status = HttpStatus.resolve(e.getErrorCode());
+
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         ErrorTemplate errorBody = ErrorTemplate.builder()
@@ -57,7 +29,23 @@ public class HandlerException extends RuntimeException {
                 .traceId(e.getTraceId())
                 .build();
 
-        log.info("Returning error body: {}", errorBody.toString());
+        log.info("Returning error body: {}", errorBody);
+
         return ResponseEntity.status(status).body(errorBody);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorTemplate> handleGenericException(Exception e) {
+
+        log.error("Unexpected error", e);
+
+        ErrorTemplate errorBody = ErrorTemplate.builder()
+                .errorCode(500)
+                .message("Unexpected internal error")
+                .timestamp(java.time.LocalDateTime.now())
+                .traceId(java.util.UUID.randomUUID().toString())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorBody);
     }
 }

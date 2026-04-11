@@ -29,4 +29,4 @@ logging:
     feign.client: DEBUG
 
 api:
-  secret: "{API_SECRET:Dsp#2025@v1Pr0v!@}"
+  secret: "{API_SECRET:eVglP1OZPeWfkZ4ulC4dNfTHytY21dJXaP7jjNrbHmiNsup5GpevNl7W40Br5AXwpOS5CjdG/wkaJmXsQ6YFOQ==}"
